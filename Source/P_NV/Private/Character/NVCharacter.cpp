@@ -15,6 +15,17 @@ ANVCharacter::ANVCharacter()
 	NVAttributeSet = CreateDefaultSubobject<UNVAttributeSet>("NVAttribute Set");
 }
 
+void ANVCharacter::ServerSideInit()
+{
+	NVAbilitySystemComponent->InitAbilityActorInfo(this, this);
+	NVAbilitySystemComponent->ApplyInitialEffects();
+}
+
+void ANVCharacter::ClientSideInit()
+{
+	NVAbilitySystemComponent->InitAbilityActorInfo(this, this);
+}
+
 void ANVCharacter::BeginPlay()
 {
 	Super::BeginPlay();

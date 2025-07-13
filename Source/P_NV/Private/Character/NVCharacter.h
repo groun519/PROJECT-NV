@@ -14,6 +14,8 @@ class ANVCharacter : public ACharacter, public IAbilitySystemInterface
 
 public:
 	ANVCharacter();
+	void ServerSideInit();
+	void ClientSideInit();
 
 protected:
 	virtual void BeginPlay() override;
@@ -27,7 +29,7 @@ public:
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 private:
-	UPROPERTY()
+	UPROPERTY(VisibleDefaultsOnly, Category = "Gameplay Ability")
 	class UNVAbilitySystemComponent* NVAbilitySystemComponent;
 	UPROPERTY()
 	class UNVAttributeSet* NVAttributeSet;
