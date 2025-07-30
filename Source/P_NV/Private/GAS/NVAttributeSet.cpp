@@ -2,6 +2,7 @@
 
 #include "GAS/NVAttributeSet.h"
 #include "Net/UnrealNetwork.h"
+#include "GameplayEffectExtension.h"
 /*
 * void UNVAttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue)
 * {
@@ -33,3 +34,28 @@ DEFINE_REPNOTIFY(Health)
 DEFINE_REPNOTIFY(MaxHealth)
 DEFINE_REPNOTIFY(Ether)
 DEFINE_REPNOTIFY(MaxEther)
+
+void UNVAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	if (Attribute == GetHealthAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
+	}
+
+	if (Attribute == GetEtherAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxEther());
+	}
+}
+
+void UNVAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	{
+		SetHealth(FMath::Clamp(GetHealth(), 0, GetMaxHealth()));
+	}
+	if (Data.EvaluatedData.Attribute == GetEtherAttribute())
+	{
+		SetEther(FMath::Clamp(GetEther(), 0, GetMaxEther()));
+	}
+}

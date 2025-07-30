@@ -2,6 +2,7 @@
 
 
 #include "Player/NVPlayerCharacter.h"
+#include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -49,6 +50,11 @@ void ANVPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		EnhancedInputComp->BindAction(LookInputAction, ETriggerEvent::Triggered, this, &ANVPlayerCharacter::HandleLoopInput);
 		EnhancedInputComp->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &ANVPlayerCharacter::HandleMoveInput);
 	}
+
+	for (const TPair<ENVAbilityInputID, UInputAction*>& InputActionPair : GameplayAbilityInputActions)
+	{
+		EnhancedInputComp->BindAction(InputActionPair.Value, ETriggerEvent::Triggered, this, &ANVPlayerCharacter::HandleAbilityInput, InputActionPair.Key);
+	}
 }
 
 void ANVPlayerCharacter::HandleLoopInput(const FInputActionValue& InputActionValue)
@@ -65,6 +71,19 @@ void ANVPlayerCharacter::HandleMoveInput(const FInputActionValue& InputActionVal
 	InputVal.Normalize();
 
 	AddMovementInput(GetMoveForwardDir() * InputVal.Y + GetLookRightDir() * InputVal.X);
+}
+
+void ANVPlayerCharacter::HandleAbilityInput(const FInputActionValue& InputActionValue, ENVAbilityInputID InputID)
+{
+	bool bPressed = InputActionValue.Get<bool>();
+	if (bPressed)
+	{
+		GetAbilitySystemComponent()->AbilityLocalInputPressed((int32)InputID);
+	}
+	else
+	{
+		GetAbilitySystemComponent()->AbilityLocalInputReleased((int32)InputID);
+	}
 }
 
 FVector ANVPlayerCharacter::GetLookRightDir() const

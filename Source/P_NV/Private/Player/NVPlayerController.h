@@ -19,6 +19,14 @@ public:
 	// 클라이언트에서만 호출됨, 리슨서버도.
 	void AcknowledgePossession(APawn* NewPawn) override;
 private:
+	void SpawnGameplayWidget();
+
 	UPROPERTY()
 	class ANVPlayerCharacter* NVPlayerCharacter;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UGameplayWidget> GameplayWidgetClass;
+
+	UPROPERTY()
+	class UGameplayWidget* GameplayWidget;
 };

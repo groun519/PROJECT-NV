@@ -3,6 +3,7 @@
 
 #include "Player/NVPlayerController.h"
 #include "Player/NVPlayerCharacter.h"
+#include "Widgets/GameplayWidget.h"
 
 void ANVPlayerController::OnPossess(APawn* NewPawn)
 {
@@ -21,5 +22,17 @@ void ANVPlayerController::AcknowledgePossession(APawn* NewPawn)
 	if (NVPlayerCharacter)
 	{
 		NVPlayerCharacter->ClientSideInit();
+		SpawnGameplayWidget();
+	}
+}
+
+void ANVPlayerController::SpawnGameplayWidget()
+{
+	if (!IsLocalPlayerController()) return;
+
+	GameplayWidget = CreateWidget<UGameplayWidget>(this, GameplayWidgetClass);
+	if (GameplayWidget)
+	{
+		GameplayWidget->AddToViewport();
 	}
 }
