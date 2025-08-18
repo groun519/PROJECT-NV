@@ -17,4 +17,5 @@ class UNVAbilitySystemStatics : public UBlueprintFunctionLibrary
 
 public:
 	static FGameplayTag GetBasicAttackAbilityTag();
+	static FGameplayTag GetDeadStatTag();
 };

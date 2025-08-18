@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class UAnimNotify_SendGameplayEvent : public UAnimNotify
+class UAnimNotify_SendGameplayEvent : public UAnimNotify // ?
 {
 	GENERATED_BODY()
 

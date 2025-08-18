@@ -86,6 +86,24 @@ void ANVPlayerCharacter::HandleAbilityInput(const FInputActionValue& InputAction
 	}
 }
 
+void ANVPlayerCharacter::OnDead()
+{
+	APlayerController* PlayerController = GetController<APlayerController>();
+	if (PlayerController)
+	{
+		DisableInput(PlayerController);
+	}
+}
+
+void ANVPlayerCharacter::OnRespawn()
+{
+	APlayerController* PlayerController = GetController<APlayerController>();
+	if (PlayerController)
+	{
+		EnableInput(PlayerController);
+	}
+}
+
 FVector ANVPlayerCharacter::GetLookRightDir() const
 {
 	return ViewCam->GetRightVector();

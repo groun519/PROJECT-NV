@@ -15,10 +15,12 @@ UAnimInstance* UNVGameplayAbility::GetOwnerAnimInstance() const
 	return nullptr;
 }
 
-TArray<FHitResult> UNVGameplayAbility::GetHitResultFromSweepLocationTargetData(const FGameplayAbilityTargetDataHandle& TargetDataHandle, float SphereSweepRadius, bool bDrawDebug, bool bIgnoreSelf) const
+TArray<FHitResult> UNVGameplayAbility::GetHitResultFromSweepLocationTargetData(const FGameplayAbilityTargetDataHandle& TargetDataHandle, float SphereSweepRadius, ETeamAttitude::Type TargetTeam, bool bDrawDebug, bool bIgnoreSelf) const
 {
 	TArray<FHitResult> OutResults;
 	TSet<AActor*> HitActors;
+
+	IGenericTeamAgentInterface* OwnerTeamInterface = Cast<IGenericTeamAgentInterface>(GetAvatarActorFromActorInfo());
 
 	for (const TSharedPtr<FGameplayAbilityTargetData> TargetData : TargetDataHandle.Data)
 	{
@@ -45,6 +47,15 @@ TArray<FHitResult> UNVGameplayAbility::GetHitResultFromSweepLocationTargetData(c
 			if (HitActors.Contains(Result.GetActor()))
 			{
 				continue;
+			}
+
+			if (OwnerTeamInterface)
+			{
+				ETeamAttitude::Type OtherActorTeamAttitude = OwnerTeamInterface->GetTeamAttitudeTowards(*Result.GetActor());
+				if (OtherActorTeamAttitude != TargetTeam)
+				{
+					continue;
+				}
 			}
 
 			HitActors.Add(Result.GetActor());

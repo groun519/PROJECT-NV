@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class UAnimNotify_SendTargetGroup : public UAnimNotify
+class UAnimNotify_SendTargetGroup : public UAnimNotify // combo
 {
 	GENERATED_BODY()
 	

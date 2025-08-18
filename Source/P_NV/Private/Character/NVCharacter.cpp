@@ -4,9 +4,13 @@
 #include "Character/NVCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/NVAbilitySystemComponent.h"
 #include "GAS/NVAttributeSet.h"
+#include "GAS/NVAbilitySystemStatics.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 #include "Widgets/OverHeadStatsGauge.h"
 
 ANVCharacter::ANVCharacter()
@@ -19,6 +23,8 @@ ANVCharacter::ANVCharacter()
 
 	OverHeadWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("Over Head Widget Component");
 	OverHeadWidgetComponent->SetupAttachment(GetRootComponent());
+
+	BindGASChangeDelegates();
 }
 
 void ANVCharacter::ServerSideInit()
@@ -36,6 +42,12 @@ void ANVCharacter::ClientSideInit()
 bool ANVCharacter::IsLocallyControlledByPlayer() const
 {
 	return GetController() && GetController()->IsLocalPlayerController();
+}
+
+void ANVCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ANVCharacter, TeamID);
 }
 
 void ANVCharacter::PossessedBy(AController* NewController)
@@ -71,6 +83,26 @@ UAbilitySystemComponent* ANVCharacter::GetAbilitySystemComponent() const
 	return NVAbilitySystemComponent;
 }
 
+void ANVCharacter::BindGASChangeDelegates()
+{
+	if (NVAbilitySystemComponent)
+	{
+		NVAbilitySystemComponent->RegisterGameplayTagEvent(UNVAbilitySystemStatics::GetDeadStatTag()).AddUObject(this, &ANVCharacter::DeathTagUpdated);
+	}
+}
+
+void ANVCharacter::DeathTagUpdated(const FGameplayTag Tag, int32 NewCount)
+{
+	if (NewCount != 0)
+	{
+		StartDeathSequence();
+	}
+	else
+	{
+		Respawn();
+	}
+}
+
 void ANVCharacter::ConfigureOverHeadStatsWidget()
 {
 	if (!OverHeadWidgetComponent) return;
@@ -99,5 +131,121 @@ void ANVCharacter::UpdateHeadGaugeVisibility()
 		float DistSquared = FVector::DistSquared(GetActorLocation(), LocalPlayerPawn->GetActorLocation());
 		OverHeadWidgetComponent->SetHiddenInGame(DistSquared > HeadStatGaugeVisibilityRangeSquared);
 	}
+}
+
+void ANVCharacter::SetStatusGaugeEnabled(bool bIsEnabled)
+{
+	GetWorldTimerManager().ClearTimer(HeadStatGaugeVisibilityUpdateTimerHandle);
+	if (bIsEnabled)
+	{
+		ConfigureOverHeadStatsWidget();
+	}
+	else
+	{
+		OverHeadWidgetComponent->SetHiddenInGame(true);
+	}
+}
+
+void ANVCharacter::DeathMontageFinished()
+{
+	SetRagdollEnabled(true);
+}
+
+void ANVCharacter::SetRagdollEnabled(bool bIsEnabled)
+{
+	if (bIsEnabled)
+	{
+		GetMesh()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		GetMesh()->SetSimulatePhysics(true);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	}
+	else
+	{
+		GetMesh()->SetSimulatePhysics(false);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetMesh()->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		GetMesh()->SetRelativeTransform(MeshRelativeTransform);
+	}
+}
+
+void ANVCharacter::PlayDeathAnimation()
+{
+	if (DeathMontage)
+	{
+		float MontageDuration = PlayAnimMontage(DeathMontage);
+		GetWorldTimerManager().SetTimer(DeathMontageTimerHandle, this, &ANVCharacter::DeathMontageFinished, MontageDuration + DeathMontageFinishTimeShift);
+	}
+}
+
+void ANVCharacter::StartDeathSequence()
+{
+	OnDead();
+	PlayDeathAnimation();
+	SetStatusGaugeEnabled(false);
+
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ANVCharacter::Respawn()
+{
+	OnRespawn();
+	SetRagdollEnabled(false);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	GetMesh()->GetAnimInstance()->StopAllMontages(0.f);
+	SetStatusGaugeEnabled(true);
+
+	if (HasAuthority() && GetController())
+	{
+		TWeakObjectPtr<AActor> StartSpot = GetController()->StartSpot;
+		if (StartSpot.IsValid())
+		{
+			SetActorTransform(StartSpot->GetActorTransform());
+		}
+	}
+
+	if (NVAbilitySystemComponent)
+	{
+		NVAbilitySystemComponent->ApplyFullStatEffect();
+	}
+}
+
+void ANVCharacter::OnDead()
+{
+}
+
+void ANVCharacter::OnRespawn()
+{
+	OnRespawn();
+	SetRagdollEnabled(false);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	GetMesh()->GetAnimInstance()->StopAllMontages(0.f);
+	SetStatusGaugeEnabled(true);
+
+	if (HasAuthority() && GetController())
+	{
+		TWeakObjectPtr<AActor> StartSpot = GetController()->StartSpot;
+		if (StartSpot.IsValid())
+		{
+			SetActorTransform(StartSpot->GetActorTransform());
+		}
+	}
+
+	if (NVAbilitySystemComponent)
+	{
+		NVAbilitySystemComponent->ApplyFullStatEffect();
+	}
+}
+
+void ANVCharacter::SetGenericTeamId(const FGenericTeamId& NewTeamID)
+{
+	TeamID = NewTeamID;
+}
+
+FGenericTeamId ANVCharacter::GetGenericTeamId() const
+{
+	return TeamID;
 }
 

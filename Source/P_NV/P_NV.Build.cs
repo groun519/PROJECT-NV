@@ -14,7 +14,7 @@ public class P_NV : ModuleRules
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { 
-			"EnhancedInput", "GameplayAbilities", "GameplayTasks", "GameplayTags", "UMG", "Slate", "SlateCore" 
+			"EnhancedInput", "GameplayAbilities", "GameplayTasks", "GameplayTags", "UMG", "Slate", "SlateCore", "AIModule"
 		});
 
 		// Uncomment if you are using Slate UI
