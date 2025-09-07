@@ -20,6 +20,7 @@ public:
 	virtual void NativePreConstruct() override;
 	void SetAndBoundToGameplayAttribute(class UAbilitySystemComponent* AbilitySystemComponent, const FGameplayAttribute& Attribute, const FGameplayAttribute& MaxAttribute);
 	void SetValue(float NewValue, float NewMaxValue);
+	void DisableText();
 
 private:
 	void ValueChanged(const FOnAttributeChangeData& ChangeData);
@@ -36,4 +37,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget))
 	class UTextBlock* ValueText;
+
+	UPROPERTY(VisibleAnywhere)
+	bool bDisableText = false;
 };

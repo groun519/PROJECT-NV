@@ -2,6 +2,7 @@
 
 
 #include "GAS/NVGameplayAbility_Combo.h"
+#include "EVA_Shape.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Abilities/Tasks/AbilityTask_WaitInputPress.h"
@@ -128,7 +129,12 @@ void UNVGameplayAbility_Combo::ComboChangedEventReceived(FGameplayEventData Data
 
 void UNVGameplayAbility_Combo::DoDamage(FGameplayEventData Data)
 {
-	TArray<FHitResult> HitResults = GetHitResultFromSweepLocationTargetData(Data.TargetData, TargetSweepSphereRadius);
+	TArray<FHitResult> HitResults =
+		GetHitResultFromSweepLocationTargetData_Weapon(
+			Data.TargetData,
+			ETeamAttitude::Hostile,
+			ShouldDrawDebug(),
+			true);
 	
 	for (const FHitResult& HitResult : HitResults)
 	{

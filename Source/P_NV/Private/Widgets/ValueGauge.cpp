@@ -43,6 +43,8 @@ void UValueGauge::SetValue(float NewValue, float NewMaxValue)
 	float NewPercent = NewValue / NewMaxValue;
 	ProgressBar->SetPercent(NewPercent);
 
+	if (bDisableText) return;
+	
 	FNumberFormattingOptions FormatOps = FNumberFormattingOptions().SetMaximumFractionalDigits(0);
 
 	ValueText->SetText(
@@ -52,6 +54,11 @@ void UValueGauge::SetValue(float NewValue, float NewMaxValue)
 			FText::AsNumber(NewMaxValue, &FormatOps)
 		)
 	);
+}
+
+void UValueGauge::DisableText()
+{
+	ValueText->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UValueGauge::ValueChanged(const FOnAttributeChangeData& ChangeData)
