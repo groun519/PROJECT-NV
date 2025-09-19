@@ -2,7 +2,6 @@
 
 
 #include "GAS/NVGameplayAbility_Combo.h"
-#include "EVA_Shape.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Abilities/Tasks/AbilityTask_WaitInputPress.h"
@@ -116,15 +115,12 @@ void UNVGameplayAbility_Combo::ComboChangedEventReceived(FGameplayEventData Data
 	if (EventTag == GetComboChangedEventEndTag())
 	{
 		NextComboName = NAME_None;
-		UE_LOG(LogTemp, Warning, TEXT("next combo is cleared"));
 		return;
 	}
 
 	TArray<FName> TagNames;
 	UGameplayTagsManager::Get().SplitGameplayTagFName(EventTag, TagNames);
 	NextComboName = TagNames.Last();
-
-	UE_LOG(LogTemp, Warning, TEXT("next combo is now: %s"), *NextComboName.ToString());
 }
 
 void UNVGameplayAbility_Combo::DoDamage(FGameplayEventData Data)

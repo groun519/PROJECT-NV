@@ -40,6 +40,11 @@ void UNVAbilitySystemComponent::ApplyFullStatEffect()
 	AuthApplyGameplayEffect(FullStatEffect);
 }
 
+const TMap<ENVAbilityInputID, TSubclassOf<UGameplayAbility>>& UNVAbilitySystemComponent::GetAbilities() const
+{
+	return Abilities;
+}
+
 void UNVAbilitySystemComponent::AuthApplyGameplayEffect(TSubclassOf<UGameplayEffect> GameplayEffect, int Level)
 {
 	if (GetOwner() && GetOwner()->HasAuthority())

@@ -3,7 +3,9 @@
 
 #include "Widgets/GameplayWidget.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GAS/NVAbilitySystemComponent.h"
 #include "AbilitySystemComponent.h"
+#include "Widgets/AbilityListView.h"
 #include "Widgets/ValueGauge.h"
 #include "GAS/NVAttributeSet.h"
 
@@ -17,4 +19,9 @@ void UGameplayWidget::NativeConstruct()
 		HealthBar->SetAndBoundToGameplayAttribute(OwnerAbilitySystemComponent, UNVAttributeSet::GetHealthAttribute(), UNVAttributeSet::GetMaxHealthAttribute());
 		EtherBar->SetAndBoundToGameplayAttribute(OwnerAbilitySystemComponent, UNVAttributeSet::GetHealthAttribute(), UNVAttributeSet::GetMaxHealthAttribute());
 	}
+}
+
+void UGameplayWidget::ConfigureAbilities(const TMap<ENVAbilityInputID, TSubclassOf<class UGameplayAbility>>& Abilities)
+{
+	AbilityListView->ConfigureAbilities(Abilities);
 }

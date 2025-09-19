@@ -50,6 +50,11 @@ void ANVCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(ANVCharacter, TeamID);
 }
 
+const TMap<ENVAbilityInputID, TSubclassOf<UGameplayAbility>>& ANVCharacter::GetAbilities() const
+{
+	return NVAbilitySystemComponent->GetAbilities();
+}
+
 void ANVCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -146,9 +151,21 @@ void ANVCharacter::SetStatusGaugeEnabled(bool bIsEnabled)
 	}
 }
 
+bool ANVCharacter::IsDead() const
+{
+	return GetAbilitySystemComponent()->HasMatchingGameplayTag(UNVAbilitySystemStatics::GetDeadStatTag());
+}
+
+void ANVCharacter::RespawnImmediately()
+{
+	if(HasAuthority())
+		GetAbilitySystemComponent()->RemoveActiveEffectsWithGrantedTags(FGameplayTagContainer(UNVAbilitySystemStatics::GetDeadStatTag()));
+}
+
 void ANVCharacter::DeathMontageFinished()
 {
-	SetRagdollEnabled(true);
+	if(IsDead())
+		SetRagdollEnabled(true);
 }
 
 void ANVCharacter::SetRagdollEnabled(bool bIsEnabled)
@@ -180,6 +197,12 @@ void ANVCharacter::PlayDeathAnimation()
 void ANVCharacter::StartDeathSequence()
 {
 	OnDead();
+
+	if (NVAbilitySystemComponent)
+	{
+		NVAbilitySystemComponent->CancelAllAbilities();
+	}
+	
 	PlayDeathAnimation();
 	SetStatusGaugeEnabled(false);
 
@@ -217,26 +240,6 @@ void ANVCharacter::OnDead()
 
 void ANVCharacter::OnRespawn()
 {
-	OnRespawn();
-	SetRagdollEnabled(false);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-	GetMesh()->GetAnimInstance()->StopAllMontages(0.f);
-	SetStatusGaugeEnabled(true);
-
-	if (HasAuthority() && GetController())
-	{
-		TWeakObjectPtr<AActor> StartSpot = GetController()->StartSpot;
-		if (StartSpot.IsValid())
-		{
-			SetActorTransform(StartSpot->GetActorTransform());
-		}
-	}
-
-	if (NVAbilitySystemComponent)
-	{
-		NVAbilitySystemComponent->ApplyFullStatEffect();
-	}
 }
 
 void ANVCharacter::SetGenericTeamId(const FGenericTeamId& NewTeamID)
@@ -247,5 +250,9 @@ void ANVCharacter::SetGenericTeamId(const FGenericTeamId& NewTeamID)
 FGenericTeamId ANVCharacter::GetGenericTeamId() const
 {
 	return TeamID;
+}
+
+void ANVCharacter::OnRep_TeamID()
+{
 }
 

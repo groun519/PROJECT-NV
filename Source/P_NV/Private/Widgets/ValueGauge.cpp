@@ -10,6 +10,11 @@ void UValueGauge::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 	ProgressBar->SetFillColorAndOpacity(BarColor);
+
+	ValueText->SetFont(ValueTextFont);
+
+	ValueText->SetVisibility(bValueTextVisible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	ProgressBar->SetVisibility(bProgressBarVisible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
 void UValueGauge::SetAndBoundToGameplayAttribute(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayAttribute& Attribute, const FGameplayAttribute& MaxAttribute)
@@ -42,8 +47,6 @@ void UValueGauge::SetValue(float NewValue, float NewMaxValue)
 
 	float NewPercent = NewValue / NewMaxValue;
 	ProgressBar->SetPercent(NewPercent);
-
-	if (bDisableText) return;
 	
 	FNumberFormattingOptions FormatOps = FNumberFormattingOptions().SetMaximumFractionalDigits(0);
 
@@ -54,11 +57,6 @@ void UValueGauge::SetValue(float NewValue, float NewMaxValue)
 			FText::AsNumber(NewMaxValue, &FormatOps)
 		)
 	);
-}
-
-void UValueGauge::DisableText()
-{
-	ValueText->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UValueGauge::ValueChanged(const FOnAttributeChangeData& ChangeData)

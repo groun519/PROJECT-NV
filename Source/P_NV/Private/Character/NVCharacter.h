@@ -20,11 +20,10 @@ public:
 	void ClientSideInit();
 	bool IsLocallyControlledByPlayer() const;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	// 서버에서만 Call됨
-	virtual void PossessedBy(AController* NewController) override;
+	const TMap<ENVAbilityInputID, TSubclassOf<UGameplayAbility>>& GetAbilities() const;
 
 protected:
+	virtual void PossessedBy(AController* NewController) override;
 	virtual void BeginPlay() override;
 
 public:	
@@ -62,6 +61,11 @@ private:
 	void SetStatusGaugeEnabled(bool bIsEnabled);
 
 	/** Death and Respawn **/
+public:
+	bool IsDead() const;
+	void RespawnImmediately();
+	
+private:
 	FTransform MeshRelativeTransform;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Death")
@@ -91,6 +95,9 @@ public:
 	// Retrieve team identifier in form of FGenericTeamId
 	virtual FGenericTeamId GetGenericTeamId() const override;
 private:
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_TeamID)
 	FGenericTeamId TeamID;
+
+	UFUNCTION()
+	virtual void OnRep_TeamID();
 };

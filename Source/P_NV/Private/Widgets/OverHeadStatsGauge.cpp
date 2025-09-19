@@ -11,9 +11,7 @@ void UOverHeadStatsGauge::ConfigureWithASC(UAbilitySystemComponent* AbilitySyste
 {
 	if (AbilitySystemComponent)
 	{
-		HealthBar->DisableText();
 		HealthBar->SetAndBoundToGameplayAttribute(AbilitySystemComponent, UNVAttributeSet::GetHealthAttribute(), UNVAttributeSet::GetMaxHealthAttribute());
-		EtherBar->DisableText();
 		EtherBar->SetAndBoundToGameplayAttribute(AbilitySystemComponent, UNVAttributeSet::GetEtherAttribute(), UNVAttributeSet::GetMaxEtherAttribute());
 	}
 }

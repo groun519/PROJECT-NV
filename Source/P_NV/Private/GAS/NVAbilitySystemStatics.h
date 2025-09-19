@@ -7,6 +7,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "NVAbilitySystemStatics.generated.h"
 
+class UGameplayAbility;
 /**
  * 
  */
@@ -18,4 +19,7 @@ class UNVAbilitySystemStatics : public UBlueprintFunctionLibrary
 public:
 	static FGameplayTag GetBasicAttackAbilityTag();
 	static FGameplayTag GetDeadStatTag();
+
+	static float GetStaticCooldownDurationForAbility(const UGameplayAbility* Ability);
+	static float GetStaticCostForAbility(const UGameplayAbility* Ability);
 };

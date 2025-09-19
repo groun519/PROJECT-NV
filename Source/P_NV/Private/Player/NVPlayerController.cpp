@@ -52,5 +52,6 @@ void ANVPlayerController::SpawnGameplayWidget()
 	if (GameplayWidget)
 	{
 		GameplayWidget->AddToViewport();
+		GameplayWidget->ConfigureAbilities(NVPlayerCharacter->GetAbilities());
 	}
 }

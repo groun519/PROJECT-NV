@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "GAS/NVGameplayAbilityTypes.h"
 #include "GameplayWidget.generated.h"
 
 /**
@@ -16,6 +17,7 @@ class UGameplayWidget : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
+	void ConfigureAbilities(const TMap<ENVAbilityInputID, TSubclassOf<class UGameplayAbility>>& Abilities);
 
 private:
 	UPROPERTY(meta=(BindWidget))
@@ -23,6 +25,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UValueGauge* EtherBar;
+
+	UPROPERTY(meta=(BindWidget))
+	class UAbilityListView* AbilityListView;
 
 	UPROPERTY()
 	class UAbilitySystemComponent* OwnerAbilitySystemComponent;

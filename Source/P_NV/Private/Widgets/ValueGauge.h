@@ -20,7 +20,6 @@ public:
 	virtual void NativePreConstruct() override;
 	void SetAndBoundToGameplayAttribute(class UAbilitySystemComponent* AbilitySystemComponent, const FGameplayAttribute& Attribute, const FGameplayAttribute& MaxAttribute);
 	void SetValue(float NewValue, float NewMaxValue);
-	void DisableText();
 
 private:
 	void ValueChanged(const FOnAttributeChangeData& ChangeData);
@@ -32,12 +31,18 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Visual")
 	FLinearColor BarColor;
 
+	UPROPERTY(EditAnywhere, Category = "Visual")
+	FSlateFontInfo ValueTextFont;
+
+	UPROPERTY(EditAnywhere, Category = "Visual")
+	bool bValueTextVisible = true;
+	
+	UPROPERTY(EditAnywhere, Category = "Visual")
+	bool bProgressBarVisible = true;
+	
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget))
 	class UProgressBar* ProgressBar;
 
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget))
 	class UTextBlock* ValueText;
-
-	UPROPERTY(VisibleAnywhere)
-	bool bDisableText = false;
 };
