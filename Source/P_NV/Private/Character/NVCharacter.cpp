@@ -2,6 +2,7 @@
 
 
 #include "Character/NVCharacter.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/CapsuleComponent.h"
