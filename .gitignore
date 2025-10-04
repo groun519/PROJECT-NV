@@ -73,3 +73,6 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+!Plugins/VRM4U/ThirdParty/**
+!Plugins/VRM4U/ThirdParty/assimp/lib/x64/Release/assimp-vc141-mt.lib
