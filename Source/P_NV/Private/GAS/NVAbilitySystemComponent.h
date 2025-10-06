@@ -17,26 +17,24 @@ class UNVAbilitySystemComponent : public UAbilitySystemComponent
 	GENERATED_BODY()
 public:
 	UNVAbilitySystemComponent();
-	void ApplyInitialEffects();
-	void GiveInitialAbilities();
+	void InitializeBaseAttributes();
+	void ServerSideInit();
 	void ApplyFullStatEffect();
 	const TMap<ENVAbilityInputID, TSubclassOf<UGameplayAbility>>& GetAbilities() const;
 
 private:
+	void ApplyInitialEffects();
+	void GiveInitialAbilities();
 	void AuthApplyGameplayEffect(TSubclassOf<UGameplayEffect> GameplayEffect, int Level = 1);
 	void HealthUpdated(const FOnAttributeChangeData& ChangeData);
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects")
-	TSubclassOf<UGameplayEffect> DeathEffect;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects")
-	TSubclassOf<UGameplayEffect> FullStatEffect;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects")
-	TArray<TSubclassOf<UGameplayEffect>> InitialEffects;
+	void EtherUpdated(const FOnAttributeChangeData& ChangeData);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Ability")
 	TMap<ENVAbilityInputID, TSubclassOf<UGameplayAbility>> Abilities;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Ability")
 	TMap<ENVAbilityInputID, TSubclassOf<UGameplayAbility>> BasicAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Base Stats")
+	class UPDA_AbilitySystemGenerics* AbilitySystemGenerics;
 };

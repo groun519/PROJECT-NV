@@ -17,7 +17,7 @@ void UGameplayWidget::NativeConstruct()
 	if (OwnerAbilitySystemComponent)
 	{
 		HealthBar->SetAndBoundToGameplayAttribute(OwnerAbilitySystemComponent, UNVAttributeSet::GetHealthAttribute(), UNVAttributeSet::GetMaxHealthAttribute());
-		EtherBar->SetAndBoundToGameplayAttribute(OwnerAbilitySystemComponent, UNVAttributeSet::GetHealthAttribute(), UNVAttributeSet::GetMaxHealthAttribute());
+		EtherBar->SetAndBoundToGameplayAttribute(OwnerAbilitySystemComponent, UNVAttributeSet::GetEtherAttribute(), UNVAttributeSet::GetMaxEtherAttribute());
 	}
 }
 

@@ -31,8 +31,7 @@ ANVCharacter::ANVCharacter()
 void ANVCharacter::ServerSideInit()
 {
 	NVAbilitySystemComponent->InitAbilityActorInfo(this, this);
-	NVAbilitySystemComponent->ApplyInitialEffects();
-	NVAbilitySystemComponent->GiveInitialAbilities();
+	NVAbilitySystemComponent->ServerSideInit();
 }
 
 void ANVCharacter::ClientSideInit()
@@ -94,6 +93,10 @@ void ANVCharacter::BindGASChangeDelegates()
 	if (NVAbilitySystemComponent)
 	{
 		NVAbilitySystemComponent->RegisterGameplayTagEvent(UNVAbilitySystemStatics::GetDeadStatTag()).AddUObject(this, &ANVCharacter::DeathTagUpdated);
+
+		NVAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UNVAttributeSet::GetMoveSpeedAttribute()).AddUObject(this, &ANVCharacter::MoveSpeedUpdated);
+		NVAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UNVAttributeSet::GetMaxHealthAttribute()).AddUObject(this, &ANVCharacter::MaxHealthUpdated);
+		NVAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UNVAttributeSet::GetMaxEtherAttribute()).AddUObject(this, &ANVCharacter::MaxManaUpdated);
 	}
 }
 
@@ -106,6 +109,27 @@ void ANVCharacter::DeathTagUpdated(const FGameplayTag Tag, int32 NewCount)
 	else
 	{
 		Respawn();
+	}
+}
+
+void ANVCharacter::MoveSpeedUpdated(const FOnAttributeChangeData& Data)
+{
+	GetCharacterMovement()->MaxWalkSpeed = Data.NewValue;
+}
+
+void ANVCharacter::MaxHealthUpdated(const FOnAttributeChangeData& Data)
+{
+	if (IsValid(NVAttributeSet))
+	{
+		NVAttributeSet->RescaleHealth();
+	}
+}
+
+void ANVCharacter::MaxManaUpdated(const FOnAttributeChangeData& Data)
+{
+	if (IsValid(NVAttributeSet))
+	{
+		NVAttributeSet->RescaleMana();
 	}
 }
 

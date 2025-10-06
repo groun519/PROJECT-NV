@@ -34,6 +34,9 @@ DEFINE_REPNOTIFY(Health)
 DEFINE_REPNOTIFY(MaxHealth)
 DEFINE_REPNOTIFY(Ether)
 DEFINE_REPNOTIFY(MaxEther)
+DEFINE_REPNOTIFY(AttackDamage)
+DEFINE_REPNOTIFY(Armor)
+DEFINE_REPNOTIFY(MoveSpeed)
 
 void UNVAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
@@ -53,9 +56,33 @@ void UNVAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0, GetMaxHealth()));
+		SetCachedHealthPercent(GetHealth()/GetMaxHealth());
 	}
 	if (Data.EvaluatedData.Attribute == GetEtherAttribute())
 	{
 		SetEther(FMath::Clamp(GetEther(), 0, GetMaxEther()));
+		SetCachedEtherPercent(GetEther()/GetMaxEther());
+	}
+}
+
+void UNVAttributeSet::RescaleHealth()
+{
+	if (!GetOwningActor()->HasAuthority())
+		return;
+
+	if (GetCachedHealthPercent() != 0 && GetHealth() != 0)
+	{
+		SetHealth(GetMaxHealth() * GetCachedHealthPercent());
+	}
+}
+
+void UNVAttributeSet::RescaleMana()
+{
+	if (!GetOwningActor()->HasAuthority())
+		return;
+
+	if (GetCachedEtherPercent() != 0 && GetEther() != 0)
+	{
+		SetEther(GetMaxEther() * GetCachedEtherPercent());
 	}
 }

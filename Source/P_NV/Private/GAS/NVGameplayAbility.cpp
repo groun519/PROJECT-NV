@@ -2,8 +2,16 @@
 
 
 #include "GAS/NVGameplayAbility.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "GAS/NVAbilitySystemStatics.h"
+#include "GAS/NVAbilitySystemStatics.h"
+#include "GameFramework/Character.h"
 #include "Kismet/KismetSystemLibrary.h"
+
+UNVGameplayAbility::UNVGameplayAbility()
+{
+}
 
 UAnimInstance* UNVGameplayAbility::GetOwnerAnimInstance() const
 {
@@ -168,4 +176,27 @@ TArray<FHitResult> UNVGameplayAbility::GetHitResultFromSweepLocationTargetData_W
 		}
 	}
 	return OutResults;
+}
+
+ACharacter* UNVGameplayAbility::GetOwningAvatarCharacter()
+{
+	if (!AvatarCharacter)
+	{
+		AvatarCharacter = Cast<ACharacter>(GetAvatarActorFromActorInfo());
+	}
+
+	return AvatarCharacter;
+}
+
+void UNVGameplayAbility::ApplyGameplayEffectToHitResultActor(const FHitResult& HitResult,
+	TSubclassOf<UGameplayEffect> GameplayEffect, int Level)
+{
+	FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingGameplayEffectSpec(GameplayEffect, Level);
+
+	FGameplayEffectContextHandle EffectContext = MakeEffectContext(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo());
+	EffectContext.AddHitResult(HitResult);
+
+	EffectSpecHandle.Data->SetContext(EffectContext);
+
+	ApplyGameplayEffectSpecToTarget(GetCurrentAbilitySpecHandle(), CurrentActorInfo, CurrentActivationInfo, EffectSpecHandle, UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(HitResult.GetActor()));
 }

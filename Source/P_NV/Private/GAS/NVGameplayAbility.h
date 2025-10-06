@@ -16,6 +16,9 @@ class UNVGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
 
+public:
+	UNVGameplayAbility();
+
 protected:
 	class UAnimInstance* GetOwnerAnimInstance() const;
 	
@@ -33,11 +36,19 @@ protected:
 
 	UFUNCTION()
 	FORCEINLINE bool ShouldDrawDebug() const { return bShouldDrawDebug; }
-		
+
+	ACharacter* GetOwningAvatarCharacter();
+	void ApplyGameplayEffectToHitResultActor(const FHitResult& HitResult, TSubclassOf<UGameplayEffect> GameplayEffect, int Level = 1);
+	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Debug")
 	bool bShouldDrawDebug = true;
 
+	UPROPERTY()
+	class ACharacter* AvatarCharacter;
+
+
+	
 	// line
 	UPROPERTY(Transient)
 	FVector PrevBaseLocal = FVector::ZeroVector; // 이전 이벤트의 Base (로컬)

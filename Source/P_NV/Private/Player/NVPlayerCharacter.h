@@ -51,7 +51,8 @@ private:
 	void HandleLoopInput(const FInputActionValue& InputActionValue);
 	void HandleMoveInput(const FInputActionValue& InputActionValue);
 	void HandleAbilityInput(const FInputActionValue& InputActionValue, ENVAbilityInputID InputID);
-
+	void SetInputEnabledFromPlayerController(bool bEnabled);
+	
 	/** Death and Respawn **/
 	virtual void OnDead() override;
 	virtual void OnRespawn() override;

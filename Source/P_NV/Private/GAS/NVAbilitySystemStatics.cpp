@@ -3,6 +3,9 @@
 
 #include "GAS/NVAbilitySystemStatics.h"
 #include "Abilities/GameplayAbility.h"
+#include "AbilitySystemInterface.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 
 FGameplayTag UNVAbilitySystemStatics::GetBasicAttackAbilityTag()
 {
@@ -12,6 +15,45 @@ FGameplayTag UNVAbilitySystemStatics::GetBasicAttackAbilityTag()
 FGameplayTag UNVAbilitySystemStatics::GetDeadStatTag()
 {
 	return FGameplayTag::RequestGameplayTag("Stats.Dead");
+}
+
+FGameplayTag UNVAbilitySystemStatics::GetHealthFullStatTag()
+{
+	return FGameplayTag::RequestGameplayTag("Stats.Health.Full");
+}
+
+FGameplayTag UNVAbilitySystemStatics::GetHealthEmptyStatTag()
+{
+	return FGameplayTag::RequestGameplayTag("Stats.Health.Empty");
+}
+
+FGameplayTag UNVAbilitySystemStatics::GetEtherFullStatTag()
+{
+	return FGameplayTag::RequestGameplayTag("Stats.Ether.Full");
+}
+
+FGameplayTag UNVAbilitySystemStatics::GetEtherEmptyStatTag()
+{
+	return FGameplayTag::RequestGameplayTag("Stats.Ether.Empty");
+}
+
+FGameplayTag UNVAbilitySystemStatics::GetPlayerRoleTag()
+{
+	return FGameplayTag::RequestGameplayTag("Role.Player");
+}
+
+bool UNVAbilitySystemStatics::IsPlayer(const AActor* ActorToCheck)
+{
+	const IAbilitySystemInterface* ActorISA = Cast<IAbilitySystemInterface>(ActorToCheck);
+	if (ActorISA)
+	{
+		UAbilitySystemComponent* ActorASC = ActorISA->GetAbilitySystemComponent();
+		if (ActorASC)
+		{
+			return ActorASC->HasMatchingGameplayTag(GetPlayerRoleTag());
+		}
+	}
+	return false;
 }
 
 float UNVAbilitySystemStatics::GetStaticCooldownDurationForAbility(const UGameplayAbility* Ability)

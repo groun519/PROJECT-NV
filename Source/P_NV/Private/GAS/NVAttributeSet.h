@@ -30,6 +30,14 @@ public:
 	ATTRIBUTE_ACCESSORS(UNVAttributeSet, MaxHealth)
 	ATTRIBUTE_ACCESSORS(UNVAttributeSet, Ether)
 	ATTRIBUTE_ACCESSORS(UNVAttributeSet, MaxEther)
+
+	ATTRIBUTE_ACCESSORS(UNVAttributeSet, AttackDamage)
+	ATTRIBUTE_ACCESSORS(UNVAttributeSet, Armor)
+	ATTRIBUTE_ACCESSORS(UNVAttributeSet, MoveSpeed)
+
+	ATTRIBUTE_ACCESSORS(UNVAttributeSet, CachedHealthPercent)
+	ATTRIBUTE_ACCESSORS(UNVAttributeSet, CachedEtherPercent)
+	
 	/**
 	 *	An "On Aggregator Change" type of event could go here, and that could be called when active gameplay effects are added or removed to an attribute aggregator.
 	 *	It is difficult to give all the information in these cases though - aggregators can change for many reasons: being added, being removed, being modified, having a modifier change, immunity, stacking rules, etc.
@@ -50,14 +58,29 @@ public:
 	 */
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
+	void RescaleHealth();
+	void RescaleMana();
+	
 private:
 	UPROPERTY(ReplicatedUsing = OnRep_Health)		FGameplayAttributeData Health;
 	UPROPERTY(ReplicatedUsing = OnRep_MaxHealth)	FGameplayAttributeData MaxHealth;
 	UPROPERTY(ReplicatedUsing = OnRep_Ether)		FGameplayAttributeData Ether;
 	UPROPERTY(ReplicatedUsing = OnRep_MaxEther)		FGameplayAttributeData MaxEther;
+	UPROPERTY(ReplicatedUsing = OnRep_MaxEther)		FGameplayAttributeData AttackDamage;
+	UPROPERTY(ReplicatedUsing = OnRep_MaxEther)		FGameplayAttributeData Armor;
+	UPROPERTY(ReplicatedUsing = OnRep_MaxEther)		FGameplayAttributeData MoveSpeed;
 	
 	UFUNCTION()	void OnRep_Health(const FGameplayAttributeData& OldValue);
 	UFUNCTION() void OnRep_MaxHealth(const FGameplayAttributeData& OldValue);
 	UFUNCTION() void OnRep_Ether(const FGameplayAttributeData& OldValue);
 	UFUNCTION() void OnRep_MaxEther(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_AttackDamage(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_Armor(const FGameplayAttributeData& OldValue);
+	UFUNCTION() void OnRep_MoveSpeed(const FGameplayAttributeData& OldValue);
+
+	UPROPERTY()
+	FGameplayAttributeData CachedHealthPercent;
+
+	UPROPERTY()
+	FGameplayAttributeData CachedEtherPercent;
 }; 

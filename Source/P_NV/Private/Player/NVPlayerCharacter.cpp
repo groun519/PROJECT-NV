@@ -86,22 +86,32 @@ void ANVPlayerCharacter::HandleAbilityInput(const FInputActionValue& InputAction
 	}
 }
 
-void ANVPlayerCharacter::OnDead()
+void ANVPlayerCharacter::SetInputEnabledFromPlayerController(bool bEnabled)
 {
 	APlayerController* PlayerController = GetController<APlayerController>();
-	if (PlayerController)
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	if (bEnabled)
+	{
+		EnableInput(PlayerController);
+	}
+	else
 	{
 		DisableInput(PlayerController);
 	}
 }
 
+void ANVPlayerCharacter::OnDead()
+{
+	SetInputEnabledFromPlayerController(false);
+}
+
 void ANVPlayerCharacter::OnRespawn()
 {
-	APlayerController* PlayerController = GetController<APlayerController>();
-	if (PlayerController)
-	{
-		EnableInput(PlayerController);
-	}
+	SetInputEnabledFromPlayerController(true);
 }
 
 FVector ANVPlayerCharacter::GetLookRightDir() const

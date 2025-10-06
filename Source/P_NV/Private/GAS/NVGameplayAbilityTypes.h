@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffect.h"
 #include "NVGameplayAbilityTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -21,4 +22,38 @@ enum class ENVAbilityInputID : uint8
 
 	Confirm				UMETA(DisplayName = "Confirm"),
 	Cancel				UMETA(DisplayName = "Cancel"),
+};
+
+USTRUCT(BlueprintType)
+struct FGenericDamgeEffectDef
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayEffect> DamageEffect;
+};
+
+USTRUCT(BlueprintType)
+struct FPlayerBaseStats : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> Class;
+
+	UPROPERTY(EditAnywhere)
+	float BaseMaxHealth;
+
+	UPROPERTY(EditAnywhere)
+	float BaseMaxEther;
+
+	UPROPERTY(EditAnywhere)
+	float BaseAttackDamage;
+
+	UPROPERTY(EditAnywhere)
+	float BaseArmor;
+
+	UPROPERTY(EditAnywhere)
+	float BaseMoveSpeed;
 };

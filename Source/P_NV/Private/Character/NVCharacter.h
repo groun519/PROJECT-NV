@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GAS/NVGameplayAbilityTypes.h"
 #include "GameFramework/Character.h"
+#include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
 #include "AbilitySystemInterface.h"
 #include "GenericTeamAgentInterface.h"
@@ -37,6 +39,9 @@ public:
 private:
 	void BindGASChangeDelegates();
 	void DeathTagUpdated(const FGameplayTag Tag, int32 NewCount);
+	void MoveSpeedUpdated(const FOnAttributeChangeData& Data);
+	void MaxHealthUpdated(const FOnAttributeChangeData& Data);
+	void MaxManaUpdated(const FOnAttributeChangeData& Data);
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Gameplay Ability")
 	class UNVAbilitySystemComponent* NVAbilitySystemComponent;

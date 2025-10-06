@@ -19,6 +19,13 @@ class UNVAbilitySystemStatics : public UBlueprintFunctionLibrary
 public:
 	static FGameplayTag GetBasicAttackAbilityTag();
 	static FGameplayTag GetDeadStatTag();
+	static FGameplayTag GetHealthFullStatTag();
+	static FGameplayTag GetHealthEmptyStatTag();
+	static FGameplayTag GetEtherFullStatTag();
+	static FGameplayTag GetEtherEmptyStatTag();
+	static FGameplayTag GetPlayerRoleTag();
+
+	static bool IsPlayer(const AActor* ActorToCheck);
 
 	static float GetStaticCooldownDurationForAbility(const UGameplayAbility* Ability);
 	static float GetStaticCostForAbility(const UGameplayAbility* Ability);
